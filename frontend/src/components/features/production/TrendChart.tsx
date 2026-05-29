@@ -82,7 +82,8 @@ export function TrendChart({ data, days = 30 }: TrendChartProps) {
       {/* Área bajo la curva (fill sutil) */}
       {segments.map((d, i) => {
         const firstPt = d.match(/M([\d.]+),([\d.]+)/);
-        const lastPt = [...d.matchAll(/L([\d.]+),([\d.]+)/g)].at(-1);
+        const allMatches = [...d.matchAll(/L([\d.]+),([\d.]+)/g)];
+        const lastPt = allMatches.length > 0 ? allMatches[allMatches.length - 1] : undefined;
         if (!firstPt) return null;
         const x1 = parseFloat(firstPt[1]);
         const x2 = lastPt ? parseFloat(lastPt[1]) : x1;

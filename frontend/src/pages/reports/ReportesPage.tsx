@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { reportesApi, type ReporteJob } from "../../api/reportes";
+import { reportesApi } from "../../api/reportes";
 
 type Tipo = "semanal" | "mensual";
 type Formato = "pdf" | "excel";
