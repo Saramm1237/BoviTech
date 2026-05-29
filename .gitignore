@@ -1,0 +1,35 @@
+# Herramientas Claude Code y BMad (configuración local, no código del proyecto)
+.claude/
+_bmad/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+*.egg-info/
+dist/
+build/
+.env
+
+# Node
+node_modules/
+dist/
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test databases
+*.db
+*.sqlite
+
+# Alembic (keep migrations tracked in git)
+backend/alembic/versions/.gitkeep

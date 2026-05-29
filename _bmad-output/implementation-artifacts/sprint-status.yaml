@@ -1,0 +1,121 @@
+# generated: 2026-05-28
+# last_updated: 2026-05-28
+# project: BoviTech
+# project_key: NOKEY
+# tracking_system: file-system
+# story_location: _bmad-output/implementation-artifacts
+
+# STATUS DEFINITIONS:
+# ==================
+# Epic Status:
+#   - backlog: Epic not yet started
+#   - in-progress: Epic actively being worked on
+#   - done: All stories in epic completed
+#
+# Epic Status Transitions:
+#   - backlog → in-progress: Automatically when first story is created (via create-story)
+#   - in-progress → done: Manually when all stories reach 'done' status
+#
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - ready-for-dev: Story file created in stories folder
+#   - in-progress: Developer actively working on implementation
+#   - review: Ready for code review (via Dev's code-review workflow)
+#   - done: Story completed
+#
+# Retrospective Status:
+#   - optional: Can be completed but not required
+#   - done: Retrospective has been completed
+#
+# WORKFLOW NOTES:
+# ===============
+# - Epic transitions to 'in-progress' automatically when first story is created
+# - Stories can be worked in parallel if team capacity allows
+# - Developer typically creates next story after previous one is 'done' to incorporate learnings
+# - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
+
+generated: 2026-05-28
+last_updated: 2026-05-28
+project: BoviTech
+project_key: NOKEY
+tracking_system: file-system
+story_location: _bmad-output/implementation-artifacts
+
+development_status:
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # EPIC 1: Infraestructura Base y Autenticación
+  # Goal: El equipo puede desarrollar localmente y un propietario puede iniciar sesión.
+  # Depends on: nothing (foundation)
+  # ─────────────────────────────────────────────────────────────────────────────
+  epic-1: in-progress
+  1-1-configuracion-repositorio-y-entorno: done
+  1-2-esquema-base-de-datos-migraciones: done
+  1-3-autenticacion-backend: done
+  1-4-autenticacion-frontend: done
+  epic-1-retrospective: optional
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # EPIC 2: Gestión del Hato
+  # Goal: El propietario puede crear y administrar los animales de su finca.
+  # Depends on: Epic 1
+  # ─────────────────────────────────────────────────────────────────────────────
+  epic-2: done
+  2-1-api-gestion-animales: done
+  2-2-ui-gestion-hato: done
+  epic-2-retrospective: optional
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # EPIC 3: Registro de Producción y Alertas Automáticas
+  # Goal: El operario registra ordeños; el sistema genera alertas automáticamente.
+  # Depends on: Epic 1 + Epic 2
+  # ─────────────────────────────────────────────────────────────────────────────
+  epic-3: done
+  3-1-api-sesiones-ordeno-y-produccion: done
+  3-2-motor-alertas-automaticas: done
+  3-3-ui-registro-ordeno: done
+  3-4-grafica-tendencia-produccion: done
+  epic-3-retrospective: optional
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # EPIC 4: Dashboard del Propietario
+  # Goal: El propietario ve el estado de su hato en tiempo real y gestiona alertas.
+  # Depends on: Epic 1 + Epic 3
+  # ─────────────────────────────────────────────────────────────────────────────
+  epic-4: backlog
+  4-1-api-dashboard: backlog
+  4-2-ui-dashboard-propietario: backlog
+  4-3-lista-alertas-y-reconocimiento: backlog
+  epic-4-retrospective: optional
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # EPIC 5: Registro de Alimentación
+  # Goal: El operario registra alimento; el sistema calcula eficiencia alimenticia.
+  # Depends on: Epic 1 + Epic 2
+  # ─────────────────────────────────────────────────────────────────────────────
+  epic-5: backlog
+  5-1-api-registro-alimentacion: backlog
+  5-2-ui-registro-alimentacion: backlog
+  epic-5-retrospective: optional
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # EPIC 6: Gestión de Usuarios
+  # Goal: El propietario gestiona los operarios de su finca y sus permisos.
+  # Depends on: Epic 1
+  # ─────────────────────────────────────────────────────────────────────────────
+  epic-6: backlog
+  6-1-api-gestion-usuarios: backlog
+  6-2-ui-gestion-usuarios: backlog
+  epic-6-retrospective: optional
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # EPIC 7: Trazabilidad y Reportes
+  # Goal: El propietario exporta historial ICA 017 y genera reportes PDF/Excel.
+  # Depends on: Epic 1 + Epic 3
+  # ─────────────────────────────────────────────────────────────────────────────
+  epic-7: backlog
+  7-1-api-trazabilidad: backlog
+  7-2-api-reportes-pdf-excel: backlog
+  7-3-ui-historial-trazabilidad: backlog
+  7-4-ui-reportes: backlog
+  epic-7-retrospective: optional
