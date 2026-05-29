@@ -8,6 +8,7 @@ import { AnimalesPage } from "./pages/animals/AnimalesPage";
 import { AnimalDetailPage } from "./pages/animals/AnimalDetailPage";
 import { RegistroOrdenoPage } from "./pages/production/RegistroOrdenoPage";
 import { AlertasPage } from "./pages/alerts/AlertasPage";
+import { RegistroAlimentacionPage } from "./pages/feed/RegistroAlimentacionPage";
 
 export default function App() {
   return (
@@ -24,6 +25,7 @@ export default function App() {
             <Route path="/animales/:id" element={<AnimalDetailPage />} />
             <Route path="/sesiones/nueva" element={<RegistroOrdenoPage />} />
             <Route path="/alertas" element={<AlertasPage />} />
+            <Route path="/alimentacion/nueva" element={<RegistroAlimentacionPage />} />
 
             {/* Solo propietario */}
             <Route element={<RoleRoute allowedRoles={["propietario"]} />}>

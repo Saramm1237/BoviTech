@@ -6,7 +6,9 @@ from sqlalchemy.exc import IntegrityError
 
 from app.api.deps import AnyAuthUser, CurrentFincaId, DbSession, PropietarioOnly
 from app.models.animal import Animal
+from app.models.registro_alimentacion import RegistroAlimentacion
 from app.models.registro_produccion import RegistroProduccion
+from app.schemas.alimentacion import EficienciaRead
 from app.schemas.animal import AnimalCreate, AnimalRead, AnimalUpdate
 from app.schemas.produccion import ProduccionDiariaRead
 
@@ -118,6 +120,43 @@ def get_produccion_animal(
     ).all()
 
     return [{"fecha": r.fecha, "total_litros": float(r.total_litros)} for r in rows]
+
+
+# ── GET /animales/{id}/eficiencia — eficiencia alimenticia por día ───────────
+
+@router.get("/{animal_id}/eficiencia", response_model=EficienciaRead)
+def get_eficiencia_animal(
+    animal_id: str,
+    db: DbSession,
+    _user: AnyAuthUser,
+    finca_id: CurrentFincaId,
+    fecha: date = Query(default_factory=date.today),
+):
+    _get_or_404(db, animal_id, finca_id)
+
+    litros = db.scalar(
+        select(func.sum(RegistroProduccion.volumen_litros)).where(
+            RegistroProduccion.animal_id == animal_id,
+            RegistroProduccion.fecha == fecha,
+        )
+    )
+    kg = db.scalar(
+        select(func.sum(RegistroAlimentacion.cantidad_kg)).where(
+            RegistroAlimentacion.animal_id == animal_id,
+            RegistroAlimentacion.fecha == fecha,
+        )
+    )
+
+    litros_f = float(litros) if litros is not None else None
+    kg_f = float(kg) if kg is not None else None
+    eficiencia = (litros_f / kg_f) if (litros_f is not None and kg_f and kg_f > 0) else None
+
+    return EficienciaRead(
+        fecha=fecha,
+        litros_producidos=litros_f,
+        kg_alimento=kg_f,
+        eficiencia_litros_por_kg=eficiencia,
+    )
 
 
 # ── Helper ────────────────────────────────────────────────────────────────────

@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { animalesApi } from "../../api/animales";
+import { eficienciaApi } from "../../api/alimentacion";
 import { useProduccionAnimal } from "../../hooks/useProduccion";
 import { TrendChart } from "../../components/features/production/TrendChart";
 import { formatDate } from "../../utils/formatters";
 import type { Animal } from "../../types/animal";
+import type { EficienciaData } from "../../types/alimentacion";
 
 export function AnimalDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -12,8 +14,17 @@ export function AnimalDetailPage() {
 
   const [animal, setAnimal] = useState<Animal | null>(null);
   const [loadingAnimal, setLoadingAnimal] = useState(true);
+  const [eficiencia, setEficiencia] = useState<EficienciaData | null>(null);
 
   const { data: produccion, loading: loadingChart } = useProduccionAnimal(id);
+  const today = new Date().toISOString().split("T")[0];
+
+  useEffect(() => {
+    if (!id) return;
+    eficienciaApi.get(id, today)
+      .then(({ data }) => setEficiencia(data))
+      .catch(() => setEficiencia(null));
+  }, [id, today]);
 
   useEffect(() => {
     if (!id) return;
@@ -97,6 +108,39 @@ export function AnimalDetailPage() {
             </div>
           </div>
         )}
+
+        {/* Eficiencia alimenticia hoy */}
+        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+          <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-gray-500">
+            Eficiencia alimenticia — hoy
+          </h2>
+          {eficiencia ? (
+            <div className="grid grid-cols-3 gap-3 text-center">
+              <div>
+                <p className="text-xl font-bold text-green-700">
+                  {eficiencia.litros_producidos !== null ? `${eficiencia.litros_producidos.toFixed(1)} L` : "—"}
+                </p>
+                <p className="text-xs text-gray-400 mt-1">Producción</p>
+              </div>
+              <div>
+                <p className="text-xl font-bold text-blue-700">
+                  {eficiencia.kg_alimento !== null ? `${eficiencia.kg_alimento.toFixed(1)} kg` : "—"}
+                </p>
+                <p className="text-xs text-gray-400 mt-1">Alimento</p>
+              </div>
+              <div>
+                <p className="text-xl font-bold text-purple-700">
+                  {eficiencia.eficiencia_litros_por_kg !== null
+                    ? `${eficiencia.eficiencia_litros_por_kg.toFixed(2)}`
+                    : "—"}
+                </p>
+                <p className="text-xs text-gray-400 mt-1">L / kg</p>
+              </div>
+            </div>
+          ) : (
+            <p className="text-center text-sm text-gray-400">Sin datos de eficiencia para hoy</p>
+          )}
+        </div>
 
         {/* Gráfica de tendencia */}
         <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">

@@ -93,9 +93,9 @@ development_status:
   # Goal: El operario registra alimento; el sistema calcula eficiencia alimenticia.
   # Depends on: Epic 1 + Epic 2
   # ─────────────────────────────────────────────────────────────────────────────
-  epic-5: backlog
-  5-1-api-registro-alimentacion: backlog
-  5-2-ui-registro-alimentacion: backlog
+  epic-5: done
+  5-1-api-registro-alimentacion: done
+  5-2-ui-registro-alimentacion: done
   epic-5-retrospective: optional
 
   # ─────────────────────────────────────────────────────────────────────────────

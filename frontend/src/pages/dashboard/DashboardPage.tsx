@@ -42,7 +42,7 @@ export function DashboardPage() {
           <QuickAction icon="☀️" label="Registrar ordeño" onClick={() => navigate("/sesiones/nueva")} color="green" />
           <QuickAction icon="🐄" label="Gestión del hato" onClick={() => navigate("/animales")} color="green" />
           <QuickAction icon="⚠️" label="Alertas" onClick={() => navigate("/alertas")} color="amber" />
-          <QuickAction icon="📊" label="Reportes" onClick={() => {}} color="gray" disabled />
+          <QuickAction icon="🌾" label="Alimentación" onClick={() => navigate("/alimentacion/nueva")} color="green" />
         </div>
 
         {error && (
