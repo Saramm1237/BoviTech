@@ -16,6 +16,7 @@ from app.schemas.produccion import (
     SesionRead,
 )
 from app.services.alert_engine import run_alert_engine
+from app.services.trazabilidad_service import write_evento
 
 router = APIRouter(prefix="/sesiones", tags=["Sesiones de Ordeño"])
 
@@ -150,6 +151,23 @@ def create_registros(
 
     for rp in registros:
         db.refresh(rp)
+
+    # Escribir eventos de trazabilidad para cada registro
+    for rp in registros:
+        write_evento(
+            db,
+            finca_id=finca_id,
+            animal_id=rp.animal_id,
+            tipo_evento="ordeno",
+            datos_evento={
+                "sesion_id": sesion_id,
+                "volumen_litros": float(rp.volumen_litros),
+                "fecha": str(sesion.fecha),
+                "turno": sesion.turno,
+            },
+            responsable_id=current_user.id,
+        )
+    db.commit()
 
     background_tasks.add_task(
         run_alert_engine,

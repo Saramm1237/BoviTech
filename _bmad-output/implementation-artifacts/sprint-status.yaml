@@ -113,9 +113,9 @@ development_status:
   # Goal: El propietario exporta historial ICA 017 y genera reportes PDF/Excel.
   # Depends on: Epic 1 + Epic 3
   # ─────────────────────────────────────────────────────────────────────────────
-  epic-7: backlog
-  7-1-api-trazabilidad: backlog
-  7-2-api-reportes-pdf-excel: backlog
-  7-3-ui-historial-trazabilidad: backlog
-  7-4-ui-reportes: backlog
+  epic-7: done
+  7-1-api-trazabilidad: done
+  7-2-api-reportes-pdf-excel: done
+  7-3-ui-historial-trazabilidad: done
+  7-4-ui-reportes: done
   epic-7-retrospective: optional

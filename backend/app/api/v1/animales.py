@@ -11,6 +11,10 @@ from app.models.registro_produccion import RegistroProduccion
 from app.schemas.alimentacion import EficienciaRead
 from app.schemas.animal import AnimalCreate, AnimalRead, AnimalUpdate
 from app.schemas.produccion import ProduccionDiariaRead
+from app.schemas.trazabilidad import EventoTrazabilidadRead
+from app.services.trazabilidad_service import write_evento
+from app.models.evento_trazabilidad import EventoTrazabilidad
+from app.models.usuario import Usuario
 
 router = APIRouter(prefix="/animales", tags=["Animales"])
 
@@ -80,14 +84,23 @@ def update_animal(
 def deactivate_animal(
     animal_id: str,
     db: DbSession,
-    _user: PropietarioOnly,
+    current_user: PropietarioOnly,
     finca_id: CurrentFincaId,
     baja_motivo: str = Query(default="Sin motivo especificado", max_length=200),
 ):
     animal = _get_or_404(db, animal_id, finca_id)
+    today = date.today()
     animal.activo = False
-    animal.baja_fecha = date.today()
+    animal.baja_fecha = today
     animal.baja_motivo = baja_motivo
+    write_evento(
+        db,
+        finca_id=finca_id,
+        animal_id=animal_id,
+        tipo_evento="baja",
+        datos_evento={"motivo": baja_motivo, "fecha_baja": str(today)},
+        responsable_id=current_user.id,
+    )
     db.commit()
 
 
@@ -120,6 +133,37 @@ def get_produccion_animal(
     ).all()
 
     return [{"fecha": r.fecha, "total_litros": float(r.total_litros)} for r in rows]
+
+
+# ── GET /animales/{id}/trazabilidad — historial cronológico ──────────────────
+
+@router.get("/{animal_id}/trazabilidad", response_model=list[EventoTrazabilidadRead])
+def get_trazabilidad(
+    animal_id: str,
+    db: DbSession,
+    _user: AnyAuthUser,
+    finca_id: CurrentFincaId,
+):
+    _get_or_404(db, animal_id, finca_id)
+    rows = db.execute(
+        select(EventoTrazabilidad, Usuario.nombre.label("responsable_nombre"))
+        .join(Usuario, EventoTrazabilidad.responsable_id == Usuario.id)
+        .where(
+            EventoTrazabilidad.animal_id == animal_id,
+            EventoTrazabilidad.finca_id == finca_id,
+        )
+        .order_by(EventoTrazabilidad.created_at.asc())
+    ).all()
+    return [
+        EventoTrazabilidadRead(
+            id=e.id,
+            tipo_evento=e.tipo_evento,
+            datos_evento=e.datos_evento,
+            responsable_nombre=nombre,
+            created_at=e.created_at,
+        )
+        for e, nombre in rows
+    ]
 
 
 # ── GET /animales/{id}/eficiencia — eficiencia alimenticia por día ───────────

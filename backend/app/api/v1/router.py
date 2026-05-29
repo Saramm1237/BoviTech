@@ -7,6 +7,8 @@ from app.api.v1.alertas import router as alertas_router
 from app.api.v1.dashboard import router as dashboard_router
 from app.api.v1.alimentacion import router as alimentacion_router
 from app.api.v1.usuarios import router as usuarios_router
+from app.api.v1.trazabilidad import router as trazabilidad_router
+from app.api.v1.reportes import router as reportes_router
 
 router = APIRouter()
 router.include_router(auth_router)
@@ -16,3 +18,5 @@ router.include_router(alertas_router)
 router.include_router(dashboard_router)
 router.include_router(alimentacion_router)
 router.include_router(usuarios_router)
+router.include_router(trazabilidad_router)
+router.include_router(reportes_router)

@@ -2,11 +2,28 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { animalesApi } from "../../api/animales";
 import { eficienciaApi } from "../../api/alimentacion";
+import { trazabilidadApi } from "../../api/trazabilidad";
 import { useProduccionAnimal } from "../../hooks/useProduccion";
 import { TrendChart } from "../../components/features/production/TrendChart";
 import { formatDate } from "../../utils/formatters";
 import type { Animal } from "../../types/animal";
 import type { EficienciaData } from "../../types/alimentacion";
+import type { EventoTrazabilidad } from "../../types/trazabilidad";
+
+const TIPO_LABELS: Record<string, string> = {
+  ordeno: "Ordeño",
+  baja: "Baja del hato",
+  alimentacion: "Alimentación",
+  alta: "Alta en hato",
+};
+
+function formatEvento(e: EventoTrazabilidad): string {
+  const d = e.datos_evento as Record<string, unknown>;
+  if (e.tipo_evento === "ordeno") return `Ordeño — ${d.volumen_litros} L (${d.turno ?? ""})`;
+  if (e.tipo_evento === "baja") return `Baja del hato — ${d.motivo ?? "sin motivo"}`;
+  if (e.tipo_evento === "alimentacion") return `Alimentación — ${d.tipo_alimento ?? ""}, ${d.cantidad_kg ?? ""} kg`;
+  return TIPO_LABELS[e.tipo_evento] ?? e.tipo_evento;
+}
 
 export function AnimalDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -15,6 +32,8 @@ export function AnimalDetailPage() {
   const [animal, setAnimal] = useState<Animal | null>(null);
   const [loadingAnimal, setLoadingAnimal] = useState(true);
   const [eficiencia, setEficiencia] = useState<EficienciaData | null>(null);
+  const [eventos, setEventos] = useState<EventoTrazabilidad[]>([]);
+  const [loadingEventos, setLoadingEventos] = useState(true);
 
   const { data: produccion, loading: loadingChart } = useProduccionAnimal(id);
   const today = new Date().toISOString().split("T")[0];
@@ -24,6 +43,10 @@ export function AnimalDetailPage() {
     eficienciaApi.get(id, today)
       .then(({ data }) => setEficiencia(data))
       .catch(() => setEficiencia(null));
+    trazabilidadApi.getByAnimal(id)
+      .then(({ data }) => setEventos(data))
+      .catch(() => setEventos([]))
+      .finally(() => setLoadingEventos(false));
   }, [id, today]);
 
   useEffect(() => {
@@ -151,6 +174,53 @@ export function AnimalDetailPage() {
             <div className="flex items-center justify-center py-10 text-gray-300 animate-pulse text-3xl">📈</div>
           ) : (
             <TrendChart data={produccion} days={30} />
+          )}
+        </div>
+        {/* Historial de trazabilidad */}
+        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500">
+              Historial de trazabilidad
+            </h2>
+            {animal && (
+              <button
+                onClick={() => {
+                  const url = trazabilidadApi.exportUrl(animal.id);
+                  const token = localStorage.getItem("access_token") ?? "";
+                  fetch(url, { headers: { Authorization: `Bearer ${token}` } })
+                    .then((r) => r.blob())
+                    .then((blob) => {
+                      const a = document.createElement("a");
+                      a.href = URL.createObjectURL(blob);
+                      a.download = `trazabilidad_${animal.numero_arete}.csv`;
+                      a.click();
+                    });
+                }}
+                className="rounded-lg border border-green-200 px-3 py-1 text-xs font-medium text-green-700 hover:bg-green-50"
+              >
+                ↓ Exportar ICA 017
+              </button>
+            )}
+          </div>
+
+          {loadingEventos ? (
+            <div className="animate-pulse space-y-2">
+              {[1, 2, 3].map((i) => <div key={i} className="h-10 bg-gray-100 rounded-lg" />)}
+            </div>
+          ) : eventos.length === 0 ? (
+            <p className="text-center text-sm text-gray-400 py-6">Sin eventos registrados</p>
+          ) : (
+            <ol className="relative border-l border-gray-200 ml-3 space-y-4">
+              {[...eventos].reverse().map((e) => (
+                <li key={e.id} className="ml-4">
+                  <div className="absolute -left-1.5 mt-1.5 h-3 w-3 rounded-full border border-white bg-green-500" />
+                  <p className="text-sm font-medium text-gray-800">{formatEvento(e)}</p>
+                  <p className="text-xs text-gray-400">
+                    {new Date(e.created_at).toLocaleString("es-CO")} · {e.responsable_nombre}
+                  </p>
+                </li>
+              ))}
+            </ol>
           )}
         </div>
       </main>
