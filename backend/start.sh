@@ -7,5 +7,8 @@ python -c "from app.core.database import engine; conn = engine.connect(); conn.c
 echo "==> Ejecutando migraciones..."
 alembic upgrade head
 
+echo "==> Creando usuario inicial si no existe..."
+python create_admin.py
+
 echo "==> Iniciando servidor en puerto ${PORT:-8000}..."
 exec uvicorn app.main:app --host 0.0.0.0 --port "${PORT:-8000}"
