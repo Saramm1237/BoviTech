@@ -1,3 +1,5 @@
+import json
+
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -18,6 +20,18 @@ class Settings(BaseSettings):
         # Railway provee mysql:// pero SQLAlchemy necesita mysql+pymysql://
         if v.startswith("mysql://") and "+pymysql" not in v:
             return v.replace("mysql://", "mysql+pymysql://", 1)
+        return v
+
+    @field_validator("CORS_ORIGINS", mode="before")
+    @classmethod
+    def parse_cors(cls, v):
+        # Acepta tanto JSON string como lista ya parseada
+        if isinstance(v, str):
+            v = v.strip()
+            if v.startswith("["):
+                return json.loads(v)
+            # Soporte para lista separada por comas
+            return [origin.strip() for origin in v.split(",") if origin.strip()]
         return v
 
 
