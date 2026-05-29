@@ -15,7 +15,7 @@ from app.schemas.alimentacion import (
 router = APIRouter(prefix="/alimentacion", tags=["Alimentación"])
 
 
-@router.get("/", response_model=list[AlimentacionRead])
+@router.get("", response_model=list[AlimentacionRead])
 def list_alimentacion(
     db: DbSession,
     _user: AnyAuthUser,
@@ -32,7 +32,7 @@ def list_alimentacion(
     return db.scalars(stmt).all()
 
 
-@router.post("/", response_model=AlimentacionRead, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=AlimentacionRead, status_code=status.HTTP_201_CREATED)
 def create_alimentacion(
     payload: AlimentacionCreate,
     db: DbSession,

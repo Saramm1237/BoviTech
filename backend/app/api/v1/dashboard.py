@@ -12,7 +12,7 @@ from app.schemas.dashboard import AnimalRankingItem, DashboardRead
 router = APIRouter(prefix="/dashboard", tags=["Dashboard"])
 
 
-@router.get("/", response_model=DashboardRead)
+@router.get("", response_model=DashboardRead)
 def get_dashboard(
     db: DbSession,
     _user: AnyAuthUser,

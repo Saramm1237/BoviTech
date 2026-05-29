@@ -10,7 +10,7 @@ from app.schemas.usuario import UsuarioCreate, UsuarioRead
 router = APIRouter(prefix="/usuarios", tags=["Usuarios"])
 
 
-@router.get("/", response_model=list[UsuarioRead])
+@router.get("", response_model=list[UsuarioRead])
 def list_usuarios(
     db: DbSession,
     _user: PropietarioOnly,
@@ -24,7 +24,7 @@ def list_usuarios(
     return usuarios
 
 
-@router.post("/", response_model=UsuarioRead, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=UsuarioRead, status_code=status.HTTP_201_CREATED)
 def create_usuario(
     payload: UsuarioCreate,
     db: DbSession,

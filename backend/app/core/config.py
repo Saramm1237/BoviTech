@@ -17,9 +17,20 @@ class Settings(BaseSettings):
     @field_validator("DATABASE_URL")
     @classmethod
     def fix_mysql_url(cls, v: str) -> str:
-        # Railway provee mysql:// pero SQLAlchemy necesita mysql+pymysql://
+        # 1. Convertir mysql:// a mysql+pymysql://
         if v.startswith("mysql://") and "+pymysql" not in v:
-            return v.replace("mysql://", "mysql+pymysql://", 1)
+            v = v.replace("mysql://", "mysql+pymysql://", 1)
+
+        # 2. Proxy externo de Railway requiere SSL sin verificación estricta
+        is_external = (
+            "railway.internal" not in v
+            and "localhost" not in v
+            and "127.0.0.1" not in v
+        )
+        if is_external and "ssl_verify_cert" not in v:
+            sep = "&" if "?" in v else "?"
+            v += f"{sep}ssl_verify_cert=false&ssl_verify_identity=false"
+
         return v
 
     @field_validator("CORS_ORIGINS", mode="before")

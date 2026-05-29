@@ -29,7 +29,7 @@ def _to_alerta_read(alerta: Alerta, animal: Animal | None) -> AlertaRead:
     )
 
 
-@router.get("/", response_model=list[AlertaRead])
+@router.get("", response_model=list[AlertaRead])
 def list_alertas(
     db: DbSession,
     _user: AnyAuthUser,

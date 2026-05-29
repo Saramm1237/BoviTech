@@ -25,7 +25,7 @@ TURNO_LABEL = {"manana": "mañana", "tarde": "tarde"}
 
 # ── GET /sesiones — listar con filtros opcionales ─────────────────────────────
 
-@router.get("/", response_model=list[SesionRead])
+@router.get("", response_model=list[SesionRead])
 def list_sesiones(
     db: DbSession,
     _user: AnyAuthUser,
@@ -44,7 +44,7 @@ def list_sesiones(
 
 # ── POST /sesiones — crear sesión de ordeño ───────────────────────────────────
 
-@router.post("/", response_model=SesionRead, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=SesionRead, status_code=status.HTTP_201_CREATED)
 def create_sesion(
     payload: SesionCreate,
     db: DbSession,

@@ -19,7 +19,7 @@ from app.models.usuario import Usuario
 router = APIRouter(prefix="/animales", tags=["Animales"])
 
 
-@router.get("/", response_model=list[AnimalRead])
+@router.get("", response_model=list[AnimalRead])
 def list_animales(
     db: DbSession,
     _user: AnyAuthUser,
@@ -43,7 +43,7 @@ def get_animal(
     return _get_or_404(db, animal_id, finca_id)
 
 
-@router.post("/", response_model=AnimalRead, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=AnimalRead, status_code=status.HTTP_201_CREATED)
 def create_animal(
     payload: AnimalCreate,
     db: DbSession,
