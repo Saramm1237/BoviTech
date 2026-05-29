@@ -1,5 +1,9 @@
+from uuid import uuid4
+
 from fastapi import APIRouter, HTTPException, status
+from pydantic import BaseModel, EmailStr, Field
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 
 from app.api.deps import AnyAuthUser, CurrentUser, DbSession, UserFromRefresh
 from app.core.security import (
@@ -8,8 +12,16 @@ from app.core.security import (
     get_password_hash,
     verify_password,
 )
+from app.models.finca import Finca
 from app.models.usuario import Usuario
 from app.schemas.auth import ChangePasswordRequest, LoginRequest, TokenResponse, UserInToken
+
+
+class RegisterRequest(BaseModel):
+    nombre_finca: str = Field(..., min_length=1, max_length=200)
+    nombre: str = Field(..., min_length=1, max_length=200)
+    email: EmailStr
+    password: str = Field(..., min_length=8)
 
 router = APIRouter(prefix="/auth", tags=["Autenticación"])
 
@@ -21,6 +33,33 @@ def _build_token_response(user: Usuario) -> TokenResponse:
         refresh_token=create_refresh_token(token_data),
         user=UserInToken.model_validate(user),
     )
+
+
+@router.post("/register", response_model=TokenResponse, status_code=status.HTTP_201_CREATED)
+def register(payload: RegisterRequest, db: DbSession):
+    finca = Finca(id=str(uuid4()), nombre=payload.nombre_finca)
+    db.add(finca)
+    db.flush()
+
+    usuario = Usuario(
+        id=str(uuid4()),
+        finca_id=finca.id,
+        email=str(payload.email),
+        nombre=payload.nombre,
+        password_hash=get_password_hash(payload.password),
+        rol="propietario",
+    )
+    db.add(usuario)
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Ya existe una cuenta con este email",
+        )
+    db.refresh(usuario)
+    return _build_token_response(usuario)
 
 
 @router.post("/login", response_model=TokenResponse)

@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import type { AxiosError } from "axios";
 
@@ -102,6 +102,13 @@ export function LoginPage() {
           >
             {loading ? "Ingresando…" : "Ingresar"}
           </button>
+
+          <p className="text-center text-sm text-gray-500">
+            ¿No tienes cuenta?{" "}
+            <Link to="/registro" className="font-medium text-green-700 hover:underline">
+              Regístrate gratis
+            </Link>
+          </p>
         </form>
       </div>
     </div>

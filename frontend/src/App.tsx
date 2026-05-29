@@ -3,6 +3,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { PrivateRoute } from "./components/common/PrivateRoute";
 import { RoleRoute } from "./components/common/RoleRoute";
 import { LoginPage } from "./pages/auth/LoginPage";
+import { RegisterPage } from "./pages/auth/RegisterPage";
 import { DashboardPage } from "./pages/dashboard/DashboardPage";
 import { AnimalesPage } from "./pages/animals/AnimalesPage";
 import { AnimalDetailPage } from "./pages/animals/AnimalDetailPage";
@@ -17,8 +18,9 @@ export default function App() {
     <BrowserRouter>
       <AuthProvider>
         <Routes>
-          {/* Pública */}
+          {/* Públicas */}
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/registro" element={<RegisterPage />} />
 
           {/* Protegidas */}
           <Route element={<PrivateRoute />}>
