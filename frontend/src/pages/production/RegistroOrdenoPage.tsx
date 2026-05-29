@@ -201,9 +201,17 @@ export function RegistroOrdenoPage() {
       {/* Cabecera */}
       <header className="sticky top-0 z-10 border-b border-gray-200 bg-white px-4 py-3 shadow-sm">
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-base font-bold text-gray-800">Ordeño {turnoLabel}</h1>
-            <p className="text-xs text-gray-500">{registrados.size}/{animales.length} registradas</p>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate("/dashboard")}
+              className="rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100"
+            >
+              ← Panel
+            </button>
+            <div>
+              <h1 className="text-base font-bold text-gray-800">Ordeño {turnoLabel}</h1>
+              <p className="text-xs text-gray-500">{registrados.size}/{animales.length} registradas</p>
+            </div>
           </div>
           <button
             onClick={handleFinalizar}

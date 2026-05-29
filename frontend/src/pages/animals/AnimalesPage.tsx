@@ -57,9 +57,17 @@ export function AnimalesPage() {
       {/* Header */}
       <header className="border-b border-gray-200 bg-white px-6 py-4 shadow-sm">
         <div className="mx-auto flex max-w-5xl items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-2xl">🐄</span>
-            <span className="text-lg font-bold text-green-800">BoviTech</span>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate("/dashboard")}
+              className="rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100"
+            >
+              ← Panel
+            </button>
+            <div className="flex items-center gap-2">
+              <span className="text-2xl">🐄</span>
+              <span className="text-lg font-bold text-green-800">BoviTech</span>
+            </div>
           </div>
           <span className="text-sm text-gray-600">
             {user?.nombre} · <span className="capitalize text-green-700">{user?.rol}</span>
