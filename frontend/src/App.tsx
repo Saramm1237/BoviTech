@@ -9,6 +9,7 @@ import { AnimalDetailPage } from "./pages/animals/AnimalDetailPage";
 import { RegistroOrdenoPage } from "./pages/production/RegistroOrdenoPage";
 import { AlertasPage } from "./pages/alerts/AlertasPage";
 import { RegistroAlimentacionPage } from "./pages/feed/RegistroAlimentacionPage";
+import { UsuariosPage } from "./pages/users/UsuariosPage";
 
 export default function App() {
   return (
@@ -29,10 +30,7 @@ export default function App() {
 
             {/* Solo propietario */}
             <Route element={<RoleRoute allowedRoles={["propietario"]} />}>
-              <Route
-                path="/usuarios"
-                element={<div className="p-8 text-gray-500">Gestión de usuarios — próximamente</div>}
-              />
+              <Route path="/usuarios" element={<UsuariosPage />} />
             </Route>
           </Route>
 

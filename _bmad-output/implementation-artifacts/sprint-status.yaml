@@ -103,9 +103,9 @@ development_status:
   # Goal: El propietario gestiona los operarios de su finca y sus permisos.
   # Depends on: Epic 1
   # ─────────────────────────────────────────────────────────────────────────────
-  epic-6: backlog
-  6-1-api-gestion-usuarios: backlog
-  6-2-ui-gestion-usuarios: backlog
+  epic-6: done
+  6-1-api-gestion-usuarios: done
+  6-2-ui-gestion-usuarios: done
   epic-6-retrospective: optional
 
   # ─────────────────────────────────────────────────────────────────────────────

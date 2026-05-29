@@ -38,11 +38,12 @@ export function DashboardPage() {
 
       <main className="mx-auto max-w-5xl px-4 py-6 space-y-6">
         {/* Acciones rápidas */}
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
           <QuickAction icon="☀️" label="Registrar ordeño" onClick={() => navigate("/sesiones/nueva")} color="green" />
           <QuickAction icon="🐄" label="Gestión del hato" onClick={() => navigate("/animales")} color="green" />
           <QuickAction icon="⚠️" label="Alertas" onClick={() => navigate("/alertas")} color="amber" />
           <QuickAction icon="🌾" label="Alimentación" onClick={() => navigate("/alimentacion/nueva")} color="green" />
+          <QuickAction icon="👥" label="Usuarios" onClick={() => navigate("/usuarios")} color="green" />
         </div>
 
         {error && (
