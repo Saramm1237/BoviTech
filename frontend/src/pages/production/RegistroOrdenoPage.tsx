@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { sesionesApi } from "../../api/produccion";
 import { alertasApi } from "../../api/alertas";
 import { useAnimales } from "../../hooks/useAnimales";
-import type { Alerta, RegistroProduccion, Sesion, Turno } from "../../types/produccion";
+import type { Alerta, Sesion, Turno } from "../../types/produccion";
 import type { AxiosError } from "axios";
 
 type Step = "select-turno" | "registering" | "summary";

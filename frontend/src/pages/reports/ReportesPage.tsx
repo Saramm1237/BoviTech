@@ -56,7 +56,6 @@ export function ReportesPage() {
     setEstado("generating");
     setDownloadUrl(null);
     try {
-      const req = reportesApi.requestPdf;
       const fn = formato === "pdf" ? reportesApi.requestPdf : reportesApi.requestExcel;
       const { data } = await fn({ tipo, fecha_inicio: fechaInicio, fecha_fin: fechaFin });
       setJobId(data.job_id);
@@ -80,10 +79,6 @@ export function ReportesPage() {
   const handleDescargar = () => {
     if (!downloadUrl || !jobId) return;
     const token = localStorage.getItem("access_token") ?? "";
-    const link = document.createElement("a");
-    link.href = downloadUrl;
-    link.setAttribute("Authorization", `Bearer ${token}`);
-    // Para download con auth, hacemos fetch y blob
     fetch(downloadUrl, { headers: { Authorization: `Bearer ${token}` } })
       .then((r) => r.blob())
       .then((blob) => {
