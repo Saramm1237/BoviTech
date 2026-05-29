@@ -2,8 +2,10 @@ import { apiClient } from "./client";
 import type { Alerta } from "../types/produccion";
 
 export const alertasApi = {
-  list: () =>
-    apiClient.get<Alerta[]>("/alertas"),
+  list: (incluirRevisadas = false) =>
+    apiClient.get<Alerta[]>("/alertas", {
+      params: incluirRevisadas ? { incluir_revisadas: true } : undefined,
+    }),
 
   ack: (id: string) =>
     apiClient.post<Alerta>(`/alertas/${id}/ack`),

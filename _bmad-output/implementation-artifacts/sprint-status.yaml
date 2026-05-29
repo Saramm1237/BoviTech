@@ -82,10 +82,10 @@ development_status:
   # Goal: El propietario ve el estado de su hato en tiempo real y gestiona alertas.
   # Depends on: Epic 1 + Epic 3
   # ─────────────────────────────────────────────────────────────────────────────
-  epic-4: backlog
-  4-1-api-dashboard: backlog
-  4-2-ui-dashboard-propietario: backlog
-  4-3-lista-alertas-y-reconocimiento: backlog
+  epic-4: done
+  4-1-api-dashboard: done
+  4-2-ui-dashboard-propietario: done
+  4-3-lista-alertas-y-reconocimiento: done
   epic-4-retrospective: optional
 
   # ─────────────────────────────────────────────────────────────────────────────

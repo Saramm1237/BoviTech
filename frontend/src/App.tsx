@@ -7,21 +7,23 @@ import { DashboardPage } from "./pages/dashboard/DashboardPage";
 import { AnimalesPage } from "./pages/animals/AnimalesPage";
 import { AnimalDetailPage } from "./pages/animals/AnimalDetailPage";
 import { RegistroOrdenoPage } from "./pages/production/RegistroOrdenoPage";
+import { AlertasPage } from "./pages/alerts/AlertasPage";
 
 export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
         <Routes>
-          {/* Ruta pública */}
+          {/* Pública */}
           <Route path="/login" element={<LoginPage />} />
 
-          {/* Rutas protegidas */}
+          {/* Protegidas */}
           <Route element={<PrivateRoute />}>
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/animales" element={<AnimalesPage />} />
             <Route path="/animales/:id" element={<AnimalDetailPage />} />
             <Route path="/sesiones/nueva" element={<RegistroOrdenoPage />} />
+            <Route path="/alertas" element={<AlertasPage />} />
 
             {/* Solo propietario */}
             <Route element={<RoleRoute allowedRoles={["propietario"]} />}>

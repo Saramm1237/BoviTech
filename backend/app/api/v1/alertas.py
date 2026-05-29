@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, Query, status
 from sqlalchemy import case, select
 
 from app.api.deps import AnyAuthUser, CurrentFincaId, DbSession, PropietarioOnly
@@ -12,39 +12,60 @@ from app.schemas.alerta import AlertaConfigRead, AlertaConfigUpdate, AlertaRead
 router = APIRouter(prefix="/alertas", tags=["Alertas"])
 
 
+def _to_alerta_read(alerta: Alerta, animal: Animal | None) -> AlertaRead:
+    return AlertaRead(
+        id=alerta.id,
+        finca_id=alerta.finca_id,
+        animal_id=alerta.animal_id,
+        tipo_alerta=alerta.tipo_alerta,
+        nivel=alerta.nivel,
+        mensaje=alerta.mensaje,
+        revisada=alerta.revisada,
+        fecha_revision=alerta.fecha_revision,
+        datos_extra=alerta.datos_extra,
+        created_at=alerta.created_at,
+        animal_nombre=animal.nombre if animal else None,
+        animal_numero_arete=animal.numero_arete if animal else None,
+    )
+
+
 @router.get("/", response_model=list[AlertaRead])
 def list_alertas(
     db: DbSession,
     _user: AnyAuthUser,
     finca_id: CurrentFincaId,
+    incluir_revisadas: bool = Query(default=False),
 ):
-    rows = db.execute(
+    stmt = (
         select(Alerta, Animal.nombre, Animal.numero_arete)
         .join(Animal, Alerta.animal_id == Animal.id)
-        .where(Alerta.finca_id == finca_id, Alerta.revisada.is_(False))
-        .order_by(
-            case((Alerta.nivel == "critico", 0), else_=1),
-            Alerta.created_at.desc(),
-        )
-    ).all()
+        .where(Alerta.finca_id == finca_id)
+    )
+    if not incluir_revisadas:
+        stmt = stmt.where(Alerta.revisada.is_(False))
 
-    result = []
-    for alerta, animal_nombre, animal_arete in rows:
-        result.append(AlertaRead(
-            id=alerta.id,
-            finca_id=alerta.finca_id,
-            animal_id=alerta.animal_id,
-            tipo_alerta=alerta.tipo_alerta,
-            nivel=alerta.nivel,
-            mensaje=alerta.mensaje,
-            revisada=alerta.revisada,
-            fecha_revision=alerta.fecha_revision,
-            datos_extra=alerta.datos_extra,
-            created_at=alerta.created_at,
-            animal_nombre=animal_nombre,
-            animal_numero_arete=animal_arete,
-        ))
-    return result
+    stmt = stmt.order_by(
+        case((Alerta.nivel == "critico", 0), else_=1),
+        Alerta.created_at.desc(),
+    )
+
+    return [
+        AlertaRead(
+            id=a.id,
+            finca_id=a.finca_id,
+            animal_id=a.animal_id,
+            tipo_alerta=a.tipo_alerta,
+            nivel=a.nivel,
+            mensaje=a.mensaje,
+            revisada=a.revisada,
+            fecha_revision=a.fecha_revision,
+            datos_extra=a.datos_extra,
+            created_at=a.created_at,
+            animal_nombre=nombre,
+            animal_numero_arete=arete,
+        )
+        for a, nombre, arete in db.execute(stmt).all()
+    ]
 
 
 @router.post("/{alerta_id}/ack", response_model=AlertaRead)
@@ -66,21 +87,7 @@ def ack_alerta(
     alerta.revisada_por_id = current_user.id
     db.commit()
     db.refresh(alerta)
-
-    return AlertaRead(
-        id=alerta.id,
-        finca_id=alerta.finca_id,
-        animal_id=alerta.animal_id,
-        tipo_alerta=alerta.tipo_alerta,
-        nivel=alerta.nivel,
-        mensaje=alerta.mensaje,
-        revisada=alerta.revisada,
-        fecha_revision=alerta.fecha_revision,
-        datos_extra=alerta.datos_extra,
-        created_at=alerta.created_at,
-        animal_nombre=animal.nombre if animal else None,
-        animal_numero_arete=animal.numero_arete if animal else None,
-    )
+    return _to_alerta_read(alerta, animal)
 
 
 @router.get("/config", response_model=AlertaConfigRead)
