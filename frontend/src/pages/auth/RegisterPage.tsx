@@ -1,12 +1,9 @@
 import { useState, type FormEvent } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
+import { Link } from "react-router-dom";
+import { apiClient } from "../../api/client";
 import type { AxiosError } from "axios";
 
 export function RegisterPage() {
-  const navigate = useNavigate();
-  const { login } = useAuth();
-
   const [nombreFinca, setNombreFinca] = useState("");
   const [nombre, setNombre] = useState("");
   const [email, setEmail] = useState("");
@@ -19,20 +16,17 @@ export function RegisterPage() {
     setError(null);
     setLoading(true);
     try {
-      // Registrar directamente via API y luego login automático
-      const { apiClient } = await import("../../api/client");
       const { data } = await apiClient.post("/auth/register", {
         nombre_finca: nombreFinca,
         nombre,
         email,
         password,
       });
-      // Guardar tokens igual que el login
       localStorage.setItem("access_token", data.access_token);
       localStorage.setItem("refresh_token", data.refresh_token);
       localStorage.setItem("user", JSON.stringify(data.user));
-      // Redirigir al dashboard
-      navigate("/dashboard", { replace: true });
+      // Recarga completa para que AuthContext lea el localStorage
+      window.location.href = "/dashboard";
     } catch (err) {
       const ae = err as AxiosError<{ detail: string }>;
       if (ae.response?.status === 409) {
@@ -48,7 +42,6 @@ export function RegisterPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-green-50 px-4">
       <div className="w-full max-w-sm rounded-2xl bg-white p-8 shadow-lg">
-        {/* Logo */}
         <div className="mb-8 text-center">
           <div className="mb-2 text-5xl">🐄</div>
           <h1 className="text-2xl font-bold text-green-800">BoviTech</h1>
